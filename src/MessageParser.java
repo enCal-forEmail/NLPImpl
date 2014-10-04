@@ -16,11 +16,16 @@ import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
 
-public class SUTimeDemo {
-
+public class MessageParser {
+	public static void main(String[] args){
+		String body =  "Next spring, they met every Tuesday afternoon, from 1:00 pm to 3:00 pm. Three interesting dates are 18 Feb 1997 9am. july 20 3pm-4pm. our last meeting is 4 days from today TBD";
+    	String subject = "Engr Club Meetings in Huang 23";
+    	String timestamp = "faketimestamp";
+    	ArrayList<String[]> eventsResult = getEventsInMessage(body, subject, timestamp);
+	}
 
 	// given timestamp and message id
-	public static void main(String[] args) {
+	public static ArrayList<String[]> getEventsInMessage(String body, String subject, String timestamp) {
 		AnnotationPipeline pipeline = new AnnotationPipeline();
 		pipeline.addAnnotator(new PTBTokenizerAnnotator(false));
 		pipeline.addAnnotator(new WordsToSentencesAnnotator(false));
@@ -39,7 +44,7 @@ public class SUTimeDemo {
     	pipeline.addAnnotator(new TimeAnnotator("sutime", props));
     
     	//String body = "Next spring, they met every Tuesday afternoon, from 1:00 pm to 3:00 pm.";
-    	String body =  "Next spring, they met every Tuesday afternoon, from 1:00 pm to 3:00 pm. Three interesting dates are 18 Feb 1997 9am. july 20 3pm-4pm. our last meeting is 4 days from today TBD";
+    	
     	Scanner scan = new Scanner(body);
     	scan.useDelimiter("\\n|;|\\.");
     	ArrayList<String[]> events = new ArrayList<String[]>();
@@ -103,5 +108,6 @@ public class SUTimeDemo {
 			}
 		System.out.println();
 		}
+		return events;
 	}
 }
