@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -18,6 +22,7 @@ import edu.stanford.nlp.util.CoreMap;
 
 public class MessageParser {
     private static AnnotationPipeline pipeline;
+    private static TrieST<String> trie = new TrieST<String>();
 
     static {
         pipeline = new AnnotationPipeline();
@@ -34,6 +39,19 @@ public class MessageParser {
         props.setProperty("sutime.binders", "0");
         props.setProperty("sutime.includeRange", "true");
         pipeline.addAnnotator(new TimeAnnotator("sutime", props));
+
+        BufferedReader io = null;
+        try {
+            System.out.println("ADADASA");
+            io = new BufferedReader(new FileReader("places.txt"));
+            String line;
+            while ((line = io.readLine()) != null) {
+                System.out.println(line);
+                trie.put(line, line);
+            }
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
 
 	public static void main(String[] args){
@@ -42,6 +60,17 @@ public class MessageParser {
     	String timestamp = "faketimestamp";
     	ArrayList<String[]> eventsResult = getEventsInMessage(body, subject, timestamp);
 	}
+
+    public static String getEventLocation(String body) {
+        String longestPrefix = "";
+        for (int i = 0; i < body.length(); i++) {
+            String newPrefix = trie.longestPrefixOf(body.substring(i));
+            if (newPrefix.length() > longestPrefix.length()) {
+                longestPrefix = newPrefix;
+            }
+        }
+        return longestPrefix;
+    }
 
 	// given timestamp and message id
 	public static ArrayList<String[]> getEventsInMessage(String body, String subject, String timestamp) {
