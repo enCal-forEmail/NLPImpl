@@ -257,7 +257,7 @@ public class MessageParser {
         }
 
         dates = removeDuplicates(dates, dateComparator);
-        times = removeDuplicates(times, timeComparator);g
+        times = removeDuplicates(times, timeComparator);
 
         if (times.size() == 1) {
             times.add(times.get(0));
