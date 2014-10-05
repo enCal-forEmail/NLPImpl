@@ -18,6 +18,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -42,6 +43,8 @@ public class MessageParser {
 
     private static SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
     private static SimpleDateFormat dateParser2 = new SimpleDateFormat("yyyy-MM-dd'T'HH");
+
+    private static Field origTemporalField;
 
     static {
         pipeline = new AnnotationPipeline();
@@ -71,6 +74,13 @@ public class MessageParser {
         } catch (java.io.IOException e) {
             e.printStackTrace();
         }
+
+        try {
+            origTemporalField = TimeExpression.class.getDeclaredField("origTemporal");
+            origTemporalField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
     }
     public static String getLocation(String body, String subject){ 
         ArrayList<String> locs = (ArrayList<String>) Arrays.asList(allLocs);
@@ -87,7 +97,9 @@ public class MessageParser {
 //		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break on Thursday at 7:30pm in the Whig Senate Chamber! Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
 //		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break at 7:30pm in the Whig Senate Chamber! Tomorrow at 7:30 pm! From 7:30pm to 10:12pm. Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
 
-        String body = "Celebrate the start of fall with the Princeton Student Events Committee's annual Fall Fest--don't miss out on pumpkin picking and decorating, great music, delicious food, and a fall photo booth!  TODAY:  Friday October 3 4-6pm Frist South Lawn (Rain location: Frist 100 level)";
+        String body = "Hey guys,\r\n\r\nYou should come to rock climbing tomorrow! We have enough drivers for more\r\npeople. There\'s no better way to get to know your fellow Blueprint members\r\nwhile developing your forearm muscles. If you plan on coming, just text or\r\nemail me to let me know!\r\n\r\nAlso, reminder for everyone that signed up, we are meeting at the channing\r\nside of Underhill parking lot at 2 PM!";
+
+//        String body = "2PM! Celebrate the start of fall with the Princeton Student Events Committee's annual Fall Fest--don't miss out on pumpkin picking and decorating, great music, delicious food, and a fall photo booth!  TODAY:  Friday October 3 4-6pm Frist South Lawn (Rain location: Frist 100 level)";
 
         String subject = "[RockyWire] Fwd: TODAY: PSEC presents Fall Fest!!!";
     	String timestamp = "faketimestamp";
@@ -169,9 +181,35 @@ public class MessageParser {
             System.out.println(cm);
             List<CoreLabel> tokens = cm.get(CoreAnnotations.TokensAnnotation.class);
 
-            SUTime.Temporal temp = cm.get(TimeExpression.Annotation.class).getTemporal();
-            if (temp.getClass() == SUTime.PartialTime.class) {
-                temporalQueue.add((SUTime.PartialTime) temp);
+            try {
+                Object temp = origTemporalField.get(cm.get(TimeExpression.Annotation.class));
+
+                if (SUTime.Time.class.isAssignableFrom(temp.getClass())) {
+                    Partial jodaTimePartial = ((SUTime.Time) temp).getJodaTimePartial();
+                    if (jodaTimePartial != null) {
+                        DateTimeFieldType[] fields = jodaTimePartial.getFieldTypes();
+                        if (Arrays.asList(fields).contains(DateTimeFieldType.dayOfMonth())) {
+                            SUTime.Temporal temp2 = cm.get(TimeExpression.Annotation.class).getTemporal();
+                            if (temp2.getClass() == SUTime.PartialTime.class) {
+                                temporalQueue.add((SUTime.PartialTime) temp2);
+                            }
+                        } else {
+                            temporalQueue.add(((SUTime.PartialTime) temp));
+                        }
+                    } else {
+                        SUTime.Temporal temp2 = cm.get(TimeExpression.Annotation.class).getTemporal();
+                        if (temp2.getClass() == SUTime.PartialTime.class) {
+                            temporalQueue.add((SUTime.PartialTime) temp2);
+                        }
+                    }
+                } else {
+                    SUTime.Temporal temp2 = cm.get(TimeExpression.Annotation.class).getTemporal();
+                    if (temp2.getClass() == SUTime.PartialTime.class) {
+                        temporalQueue.add((SUTime.PartialTime) temp2);
+                    }
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
         }
 
@@ -188,7 +226,8 @@ public class MessageParser {
             if (fieldTypeList.contains(DateTimeFieldType.dayOfMonth())) {
                 dates.add(partial);
             }
-            if (fieldTypeList.contains(DateTimeFieldType.hourOfDay())) {
+            if (fieldTypeList.contains(DateTimeFieldType.hourOfDay())
+                    && temp.getUncertaintyGranularity().getJodaTimePeriod().toStandardMinutes().getMinutes() <= 60) {
                 if (!fieldTypeList.contains(DateTimeFieldType.minuteOfHour())) {
                     partial = partial.with(DateTimeFieldType.minuteOfHour(), 0);
                 }
