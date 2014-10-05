@@ -95,11 +95,11 @@ public class MessageParser {
 
 	public static void main(String[] args){
 //		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break on Thursday at 7:30pm in the Whig Senate Chamber! Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
-//		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break at 7:30pm in the Whig Senate Chamber! Tomorrow at 7:30 pm! From 7:30pm to 10:12pm. Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
+		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break at 7:30pm in the Whig Senate Chamber! Tomorrow at 7:30 pm! From 7:30pm to 10:12pm. Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
 
-        String body = "Hey guys,\r\n\r\nYou should come to rock climbing tomorrow! We have enough drivers for more\r\npeople. There\'s no better way to get to know your fellow Blueprint members\r\nwhile developing your forearm muscles. If you plan on coming, just text or\r\nemail me to let me know!\r\n\r\nAlso, reminder for everyone that signed up, we are meeting at the channing\r\nside of Underhill parking lot at 2 PM!";
+//        String body = "Hey guys,\r\n\r\nYou should come to rock climbing tomorrow! We have enough drivers for more\r\npeople. There\'s no better way to get to know your fellow Blueprint members\r\nwhile developing your forearm muscles. If you plan on coming, just text or\r\nemail me to let me know!\r\n\r\nAlso, reminder for everyone that signed up, we are meeting at the channing\r\nside of Underhill parking lot at 2 PM!";
 
-//        String body = "2PM! Celebrate the start of fall with the Princeton Student Events Committee's annual Fall Fest--don't miss out on pumpkin picking and decorating, great music, delicious food, and a fall photo booth!  TODAY:  Friday October 3 4-6pm Frist South Lawn (Rain location: Frist 100 level)";
+//        String body = "Celebrate the start of fall with the Princeton Student Events Committee's annual Fall Fest--don't miss out on pumpkin picking and decorating, great music, delicious food, and a fall photo booth!  TODAY:  Friday October 3 4-6pm Frist South Lawn (Rain location: Frist 100 level)";
 
         String subject = "[RockyWire] Fwd: TODAY: PSEC presents Fall Fest!!!";
     	String timestamp = "faketimestamp";
@@ -181,6 +181,7 @@ public class MessageParser {
             System.out.println(cm);
             List<CoreLabel> tokens = cm.get(CoreAnnotations.TokensAnnotation.class);
 
+            boolean added = false;
             try {
                 Object temp = origTemporalField.get(cm.get(TimeExpression.Annotation.class));
 
@@ -188,28 +189,21 @@ public class MessageParser {
                     Partial jodaTimePartial = ((SUTime.Time) temp).getJodaTimePartial();
                     if (jodaTimePartial != null) {
                         DateTimeFieldType[] fields = jodaTimePartial.getFieldTypes();
-                        if (Arrays.asList(fields).contains(DateTimeFieldType.dayOfMonth())) {
-                            SUTime.Temporal temp2 = cm.get(TimeExpression.Annotation.class).getTemporal();
-                            if (temp2.getClass() == SUTime.PartialTime.class) {
-                                temporalQueue.add((SUTime.PartialTime) temp2);
-                            }
-                        } else {
+                        if (!Arrays.asList(fields).contains(DateTimeFieldType.dayOfMonth())) {
                             temporalQueue.add(((SUTime.PartialTime) temp));
+                            added = true;
                         }
-                    } else {
-                        SUTime.Temporal temp2 = cm.get(TimeExpression.Annotation.class).getTemporal();
-                        if (temp2.getClass() == SUTime.PartialTime.class) {
-                            temporalQueue.add((SUTime.PartialTime) temp2);
-                        }
-                    }
-                } else {
-                    SUTime.Temporal temp2 = cm.get(TimeExpression.Annotation.class).getTemporal();
-                    if (temp2.getClass() == SUTime.PartialTime.class) {
-                        temporalQueue.add((SUTime.PartialTime) temp2);
                     }
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
+            }
+
+            if (!added) {
+                SUTime.Temporal temp2 = cm.get(TimeExpression.Annotation.class).getTemporal();
+                if (temp2.getClass() == SUTime.PartialTime.class) {
+                    temporalQueue.add((SUTime.PartialTime) temp2);
+                }
             }
         }
 
