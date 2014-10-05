@@ -75,9 +75,9 @@ public class MessageParser {
 //		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break on Thursday at 7:30pm in the Whig Senate Chamber! Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
 //		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break at 7:30pm in the Whig Senate Chamber! Tomorrow at 7:30 pm! From 7:30pm to 10:12pm. Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
 
-        String body = "You are invited to join the Princeton Quadrangle Club for our member's event, Jazz Club Night, this Saturday, October 4th from 9pm to midnight. Come and mingle with our members while enjoying a variety of beverages and a live jazz band. Semi-formal attire is enouraged. Sophomores will be admitted with PUID. Please RSVP here. ";
+        String body = "Today! 8pm! Tomorrow at 1pm! Celebrate the start of fall with the Princeton Student Events Committee's annual Fall Fest--don't miss out on pumpkin picking and decorating, great music, delicious food, and a fall photo booth!  TODAY:  Friday October 3 4-6pm Frist South Lawn (Rain location: Frist 100 level)";
 
-        String subject = "Engr Club Meetings in Huang 23";
+        String subject = "[RockyWire] Fwd: TODAY: PSEC presents Fall Fest!!!";
     	String timestamp = "faketimestamp";
     	List<Event> eventsResult = getEventsInMessage(body, subject, timestamp);
 
@@ -151,7 +151,7 @@ public class MessageParser {
         //System.out.println(annotation.get(CoreAnnotations.TextAnnotation.class));
 
         List<CoreMap> timexAnnsAll = annotation.get(TimeAnnotations.TimexAnnotations.class);
-        List<SUTime.Temporal> temporalQueue = new ArrayList<SUTime.Temporal>();
+        List<SUTime.PartialTime> temporalQueue = new ArrayList<SUTime.PartialTime>();
 
         for (CoreMap cm : timexAnnsAll) {
             System.out.println(cm);
@@ -166,11 +166,16 @@ public class MessageParser {
 //                    }
 //                }
 //            } else {
-                temporalQueue.add(cm.get(TimeExpression.Annotation.class).getTemporal());
+//                temporalQueue.add(cm.get(TimeExpression.Annotation.class).getTemporal());
 //            }
+
+            SUTime.Temporal temp = cm.get(TimeExpression.Annotation.class).getTemporal();
+            if (temp.getClass() == SUTime.PartialTime.class) {
+                temporalQueue.add((SUTime.PartialTime) temp);
+            }
         }
 
-        for (SUTime.Temporal temp : temporalQueue) {
+        for (SUTime.PartialTime temp : temporalQueue) {
 
 //            System.out.println(cm + " [from char offset " +
 //                    tokens.get(0).get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) +
