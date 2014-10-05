@@ -18,7 +18,8 @@ import edu.stanford.nlp.util.CoreMap;
 
 public class MessageParser {
     private static AnnotationPipeline pipeline;
-
+    private static String[] allLocs = { "First Church of Christ, Scientist", "Church of the Good Shepherd, Episcopal", "Westminster Presbyterian Church", "St. John's Presbyterian Church", "Berkeley Women's City Club", "Town and Gown Club", "Berkeley City Hall", "William R. Thorsen House", "Rose Walk", "Old Jefferson Elementary School", "Edward F. Niehaus House", "Joseph W. Harris House", "Park Congregational Church", "Captain Charles C. Boudrow House", "Andrew Cowper Lawson House", "Drawing Building", "North Gate Hall", "Berkeley Day Nursery", "John Galen Howard House", "Golden Sheaf Bakery", "Borja House", "Barker Block", "The Studio Building", "Fox Court", "Bonita Apartments", "Bonita Hall", "Manuel Silva House", "Jeremiah T. Burke House", "Morse Block", "Toverii Tuppa", "Joseph Clapp Cottage", "Charles W. Heywood House", "College Women's Club", "Delaware Street Historic District", "Miss Eleanor M. Smith House & Cottage", "Garfield Junior High School", "United States Post Office", "The Hillside Club", "Mrs. Edmund P. King Building", "George Morgan Building", "Albert E. Montgomery House", "Sisterna Historic District", "Soda Water Works Building", "University of California Press Building", "S. J. Sill & Co. Grocery & Hardware Store", "Martha E. Sell Building", "Ernest Alva Heron Building", "Frederick H. Dakin Warehouse", "Edgar Jensen House", "Webb Block", "Standard Die & Specialty Company", "Berkeley Piano Club", "Squires Block", "Claremont Court Gate and Street Markers", "Wallace W. Clark Building", "Alfred Bartlett Houses", "Oaks Theatre", "Laura Belle Marsh Kluegel House", "California Memorial Stadium", "Elmwood Hardware Building", "Marie & Frederick A. Hoffman Building", "Lawrence Berkeley National Laboratory Bevatron Site", "Phi Kappa Psi Chapter House", "Annie & Fred J. Martin House", "Clephane Building", "Charles A. Westenberg House", "Wallace-Sauer House", "Ennor's Restaurant Building", "Bernard & Annie Maybeck House No. 1", "Berkeley Iceland", "Fred & Amy Corkill House", "Cambridge Apartments", "Hezlett's Silk Store Building", "Brower Houses and David Brower Redwood", "Donald and Helen Olsen House", "Needham-Obata Building", "Mobilized Women of Berkeley Building", "Koerber Building", "Capitol Market Building", "University YWCA", "Fish-Clark House", "Pelican Building", "Duncan & Jean McDuffie House", "John Boyd House", "University Art Museum", "Mary J. Berg House", "Lucinda Reames House No. 1", "Lucinda Reames House No. 2", "William Wilkinson House"};
+    
     static {
         pipeline = new AnnotationPipeline();
         pipeline.addAnnotator(new PTBTokenizerAnnotator(false));
@@ -34,6 +35,19 @@ public class MessageParser {
         props.setProperty("sutime.binders", "0");
         props.setProperty("sutime.includeRange", "true");
         pipeline.addAnnotator(new TimeAnnotator("sutime", props));
+    }
+    public static String getLocation(String body, String subject){ 
+        ArrayList<String> locs = (ArrayList<String>) Arrays.asList(allLocs);
+        Scanner scan = new Scanner(body);
+        while(scan.hasNext()){
+            String curr = scan.next();
+            if(locs.contains(curr)){
+                scan.close();
+                return curr;
+            }
+        }
+        scan.close();
+        return "Not Availble";
     }
 
 	public static void main(String[] args){
