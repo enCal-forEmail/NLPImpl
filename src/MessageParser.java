@@ -101,7 +101,7 @@ public class MessageParser {
         String newMessage = "";
         while(scan.hasNext()){
             String line = scan.nextLine();
-            Pattern patt = Pattern.compile("Date: [a-zA-Z]{3}[a-z]*, [a-zA-Z]{3}[a-z]* [0-9]{2}, [0-9]{4} at [0-9][0-9]*:[0-9]{2} [a-zA-Z]{2}");
+            Pattern patt = Pattern.compile("Date: [A-Z][A-Za-z, ]+ [0-9, ]+ at [0-9:]+ [A-Z]+");
             Matcher matcher = patt.matcher(line);
             newMessage += matcher.replaceAll("");
         }
@@ -120,7 +120,7 @@ public class MessageParser {
 
 	public static void main(String[] args){
 //		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break on Thursday at 7:30pm in the Whig Senate Chamber! Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
-		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break at 7:30pm in the Whig Senate Chamber! Tomorrow at 7:30 pm! From 7:30pm to 10:12pm. Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
+		String body = "Hello Sophomores!  Quad will be hosting our famous Soul Food Night thisWednesday, October 8th from 5:30 to 7:30pm. Come and enjoy some food for your soul including, fried chicken, mac and cheese, and other Southern specialities. Please sign up here; space is limited!   Hope to see you there!";
 
 //        String body = "Hey guys,\r\n\r\nYou should come to rock climbing tomorrow! We have enough drivers for more\r\npeople. There\'s no better way to get to know your fellow Blueprint members\r\nwhile developing your forearm muscles. If you plan on coming, just text or\r\nemail me to let me know!\r\n\r\nAlso, reminder for everyone that signed up, we are meeting at the channing\r\nside of Underhill parking lot at 2 PM!";
 
@@ -211,14 +211,17 @@ public class MessageParser {
             boolean added = false;
             try {
                 Object temp = origTemporalField.get(cm.get(TimeExpression.Annotation.class));
-
-                if (SUTime.Time.class.isAssignableFrom(temp.getClass())) {
-                    Partial jodaTimePartial = ((SUTime.Time) temp).getJodaTimePartial();
-                    if (jodaTimePartial != null) {
-                        DateTimeFieldType[] fields = jodaTimePartial.getFieldTypes();
-                        if (!Arrays.asList(fields).contains(DateTimeFieldType.dayOfMonth())) {
-                            temporalQueue.add(((SUTime.PartialTime) temp));
-                            added = true;
+                if (temp != null){
+                    if (SUTime.Time.class.isAssignableFrom(temp.getClass())) {
+                        Partial jodaTimePartial = ((SUTime.Time) temp).getJodaTimePartial();
+                        if (jodaTimePartial != null) {
+                            DateTimeFieldType[] fields = jodaTimePartial.getFieldTypes();
+                            if (!Arrays.asList(fields).contains(DateTimeFieldType.dayOfMonth())) {
+                                if (SUTime.PartialTime.class.isAssignableFrom(temp.getClass())) {
+                                    temporalQueue.add(((SUTime.PartialTime) temp));
+                                    added = true;
+                                }
+                            }
                         }
                     }
                 }
@@ -228,7 +231,7 @@ public class MessageParser {
 
             if (!added) {
                 SUTime.Temporal temp2 = cm.get(TimeExpression.Annotation.class).getTemporal();
-                if (temp2.getClass() == SUTime.PartialTime.class) {
+                if (SUTime.PartialTime.class.isAssignableFrom(temp2.getClass())) {
                     temporalQueue.add((SUTime.PartialTime) temp2);
                 }
             }
