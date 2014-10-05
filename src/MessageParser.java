@@ -1,11 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -19,9 +17,25 @@ import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.Partial;
 import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public class MessageParser {
+    public static final Comparator<Partial> dateComparator = new Comparator<Partial>() {
+        @Override
+        public int compare(Partial partial, Partial partial2) {
+            return partial.toString("y-M-d").compareTo(partial2.toString("y-M-d"));
+        }
+    };
+    public static final Comparator<Partial> timeComparator = new Comparator<Partial>() {
+        @Override
+        public int compare(Partial partial, Partial partial2) {
+            return partial.toString("H-m").compareTo(partial2.toString("H-m"));
+        }
+    };
     private static AnnotationPipeline pipeline;
 
     private static String[] allLocs = { "FIRST CHURCH OF CHRIST, SCIENTIST", "CHURCH OF THE GOOD SHEPHERD, EPISCOPAL", "WESTMINSTER PRESBYTERIAN CHURCH", "ST. JOHN'S PRESBYTERIAN CHURCH", "BERKELEY WOMEN'S CITY CLUB", "TOWN AND GOWN CLUB", "BERKELEY CITY HALL", "WILLIAM R. THORSEN HOUSE", "ROSE WALK", "OLD JEFFERSON ELEMENTARY SCHOOL", "EDWARD F. NIEHAUS HOUSE", "JOSEPH W. HARRIS HOUSE", "PARK CONGREGATIONAL CHURCH", "CAPTAIN CHARLES C. BOUDROW HOUSE", "ANDREW COWPER LAWSON HOUSE", "DRAWING BUILDING", "NORTH GATE HALL", "BERKELEY DAY NURSERY", "JOHN GALEN HOWARD HOUSE", "GOLDEN SHEAF BAKERY", "BORJA HOUSE", "BARKER BLOCK", "THE STUDIO BUILDING", "FOX COURT", "BONITA APARTMENTS", "BONITA HALL", "MANUEL SILVA HOUSE", "JEREMIAH T. BURKE HOUSE", "MORSE BLOCK", "TOVERII TUPPA", "JOSEPH CLAPP COTTAGE", "CHARLES W. HEYWOOD HOUSE", "COLLEGE WOMEN'S CLUB", "DELAWARE STREET HISTORIC DISTRICT", "MISS ELEANOR M. SMITH HOUSE & COTTAGE", "GARFIELD JUNIOR HIGH SCHOOL", "UNITED STATES POST OFFICE", "THE HILLSIDE CLUB", "MRS. EDMUND P. KING BUILDING", "GEORGE MORGAN BUILDING", "ALBERT E. MONTGOMERY HOUSE", "SISTERNA HISTORIC DISTRICT", "SODA WATER WORKS BUILDING", "UNIVERSITY OF CALIFORNIA PRESS BUILDING", "S. J. SILL & CO. GROCERY & HARDWARE STORE", "MARTHA E. SELL BUILDING", "ERNEST ALVA HERON BUILDING", "FREDERICK H. DAKIN WAREHOUSE", "EDGAR JENSEN HOUSE", "WEBB BLOCK", "STANDARD DIE & SPECIALTY COMPANY", "BERKELEY PIANO CLUB", "SQUIRES BLOCK", "CLAREMONT COURT GATE AND STREET MARKERS", "WALLACE W. CLARK BUILDING", "ALFRED BARTLETT HOUSES", "OAKS THEATRE", "LAURA BELLE MARSH KLUEGEL HOUSE", "CALIFORNIA MEMORIAL STADIUM", "ELMWOOD HARDWARE BUILDING", "MARIE & FREDERICK A. HOFFMAN BUILDING", "LAWRENCE BERKELEY NATIONAL LABORATORY BEVATRON SITE", "PHI KAPPA PSI CHAPTER HOUSE", "ANNIE & FRED J. MARTIN HOUSE", "CLEPHANE BUILDING", "CHARLES A. WESTENBERG HOUSE", "WALLACE-SAUER HOUSE", "ENNOR'S RESTAURANT BUILDING", "BERNARD & ANNIE MAYBECK HOUSE NO. 1", "BERKELEY ICELAND", "FRED & AMY CORKILL HOUSE", "CAMBRIDGE APARTMENTS", "HEZLETT'S SILK STORE BUILDING", "BROWER HOUSES AND DAVID BROWER REDWOOD", "DONALD AND HELEN OLSEN HOUSE", "NEEDHAM-OBATA BUILDING", "MOBILIZED WOMEN OF BERKELEY BUILDING", "KOERBER BUILDING", "CAPITOL MARKET BUILDING", "UNIVERSITY YWCA", "FISH-CLARK HOUSE", "PELICAN BUILDING", "DUNCAN & JEAN MCDUFFIE HOUSE", "JOHN BOYD HOUSE", "UNIVERSITY ART MUSEUM", "MARY J. BERG HOUSE", "LUCINDA REAMES HOUSE NO. 1", "LUCINDA REAMES HOUSE NO. 2", "WILLIAM WILKINSON HOUSE"};
@@ -119,13 +133,19 @@ public class MessageParser {
             this.end = end;
         }
 
-        public Event(DateTime date, DateTime startTime, DateTime endTime) {
+        public Event(Partial date, Partial startTime, Partial endTime) {
             // TODO: time zone issues
 
-            this.start = date.withTime(startTime.getHourOfDay(), startTime.getMinuteOfHour(), 0, 0);
-            this.end = date.withTime(endTime.getHourOfDay(), endTime.getMinuteOfHour(), 0, 0);
+            DateTimeFormatter df = DateTimeFormat.forPattern("y-M-d H-m");
 
-            if (start.compareTo(end) <= 0) {
+            String dateString = date.toString("y-M-d");
+            String startTimeString = startTime.toString("H-m");
+            String endTimeString = endTime.toString("H-m");
+
+            this.start = DateTime.parse(dateString + " " + startTimeString, df);
+            this.end = DateTime.parse(dateString + " " + endTimeString, df);
+
+            if (start.compareTo(end) > 0) {
                 end = end.withDurationAdded(1000L * 60 * 60 * 24, 1);
             }
         }
@@ -137,18 +157,12 @@ public class MessageParser {
 
 	// given timestamp and message id
 	public static List<Event> getEventsInMessage(String body, String subject, String timestamp) {
-        List<SUTime.Temporal> dates = new ArrayList<SUTime.Temporal>();
-        List<SUTime.Temporal> times = new ArrayList<SUTime.Temporal>();
-
-        List<SUTime.Temporal> temporals = new ArrayList<SUTime.Temporal>();
-
-//        body = "Next spring, they met every Tuesday afternoon, from 1:00 pm to 3:00 pm.";
+        List<Partial> dates = new ArrayList<Partial>();
+        List<Partial> times = new ArrayList<Partial>();
 
         Annotation annotation = new Annotation(body);
         annotation.set(CoreAnnotations.DocDateAnnotation.class, SUTime.getCurrentTime().toString());
         pipeline.annotate(annotation);
-
-        //System.out.println(annotation.get(CoreAnnotations.TextAnnotation.class));
 
         List<CoreMap> timexAnnsAll = annotation.get(TimeAnnotations.TimexAnnotations.class);
         List<SUTime.PartialTime> temporalQueue = new ArrayList<SUTime.PartialTime>();
@@ -156,18 +170,6 @@ public class MessageParser {
         for (CoreMap cm : timexAnnsAll) {
             System.out.println(cm);
             List<CoreLabel> tokens = cm.get(CoreAnnotations.TokensAnnotation.class);
-            //System.out.println(cm);
-
-//            if (cm.has(TimeExpression.ChildrenAnnotation.class)) {
-//                for (Object item : cm.get(TimeExpression.ChildrenAnnotation.class)) {
-//                    if (item.getClass() == Annotation.class) {
-//                        SUTime.Temporal temporal = ((Annotation) item).get(TimeExpression.Annotation.class).getTemporal();
-//                        temporalQueue.add(temporal);
-//                    }
-//                }
-//            } else {
-//                temporalQueue.add(cm.get(TimeExpression.Annotation.class).getTemporal());
-//            }
 
             SUTime.Temporal temp = cm.get(TimeExpression.Annotation.class).getTemporal();
             if (temp.getClass() == SUTime.PartialTime.class) {
@@ -182,69 +184,37 @@ public class MessageParser {
 //                    " to " + tokens.get(tokens.size() - 1).get(CoreAnnotations.CharacterOffsetEndAnnotation.class) + ']' +
 //                    " --> " + temp + " " + temp.getTimexType());
 
-            if (temp.getTimexType() == SUTime.TimexType.TIME
-                    && getPeriodMinutes(temp) < 100){ // not a date, but a time
-                times.add(temp);
-            } else if (temp.getTimexType() == SUTime.TimexType.DATE
-                    && getPeriodMinutes(temp) < 1500) {
-                dates.add(temp);
+            Partial partial = temp.getJodaTimePartial();
+            DateTimeFieldType[] fieldTypes = partial.getFieldTypes();
+            List<DateTimeFieldType> fieldTypeList = Arrays.asList(fieldTypes);
+            if (fieldTypeList.contains(DateTimeFieldType.dayOfMonth())) {
+                dates.add(partial);
             }
-
-            // a date that isn't a season
-            //else if (temp.getStandardTemporalType() != SUTime.StandardTemporalType.QUARTER_OF_YEAR && temp.getStandardTemporalType() != SUTime.StandardTemporalType.HALF_OF_YEAR && temp.getStandardTemporalType() != SUTime.StandardTemporalType.PART_OF_YEAR && temp.getStandardTemporalType() != SUTime.StandardTemporalType.SEASON_OF_YEAR && temp.getStandardTemporalType() != SUTime.StandardTemporalType.WEEK_OF_YEAR){
-//            else if(!Pattern.matches("[0-9]{4}-[A-Z]{2}", temp.toString())){
-//                if(Pattern.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}", temp.toString())){
-//                    if(currentEvent[0] == null){
-//                        currentEvent[0] = temp.toString();
-//                    } else if (currExtraInd < extras.length){
-//                        extras[currExtraInd++] = temp.toString();
-//                    }
-//                    //continue;
-//                }
-//                else {
-//                    if(currentEvent[0] == null){
-//                        currentEvent[0] = cm.toString();
-//                    } else if (currExtraInd < extras.length){
-//                        extras[currExtraInd++] = cm.toString();
-//                    }
-//                }
-//            }
-        }
-
-        Comparator<SUTime.Temporal> temporalComparator = new Comparator<SUTime.Temporal>() {
-            @Override
-            public int compare(SUTime.Temporal temporal, SUTime.Temporal temporal2) {
-                return temporal.getTime().compareTo(temporal2.getTime());
-            }
-        };
-
-        Collections.sort(dates, temporalComparator);
-        Collections.sort(times, temporalComparator);
-
-        if (dates.isEmpty()) {
-            if (times.isEmpty()) {
-                return null;
-            } else {
-                dates.add(times.get(0));
+            if (fieldTypeList.contains(DateTimeFieldType.hourOfDay())) {
+                if (!fieldTypeList.contains(DateTimeFieldType.minuteOfHour())) {
+                    partial = partial.with(DateTimeFieldType.minuteOfHour(), 0);
+                }
+                times.add(partial);
             }
         }
+
+//        Collections.sort(dates);
+        dates = removeDuplicates(dates, dateComparator);
+        times = removeDuplicates(times, timeComparator);
+
+        Collections.sort(dates, dateComparator);
+        Collections.sort(times, timeComparator);
+
         if (times.size() == 1) {
             times.add(times.get(0));
         }
 
-        List<DateTime> timesAsDateObjects = new ArrayList<DateTime>();
-        for (SUTime.Temporal time : times) {
-            timesAsDateObjects.add(toDate(time));
-        }
-
         List<Event> events = new ArrayList<Event>();
 
-
-        for (SUTime.Temporal date : dates) {
-            DateTime dt = toDate(date);
-            for (int i = 0; i < timesAsDateObjects.size(); i++) {
-                for (int j = i + 1; j < timesAsDateObjects.size(); j++) {
-                    events.add(new Event(dt, timesAsDateObjects.get(i), timesAsDateObjects.get(j)));
+        for (Partial date : dates) {
+            for (int i = 0; i < times.size(); i++) {
+                for (int j = i + 1; j < times.size(); j++) {
+                    events.add(new Event(date, times.get(i), times.get(j)));
                 }
             }
         }
@@ -252,7 +222,9 @@ public class MessageParser {
         return events;
 	}
 
-    private static DateTime toDate(SUTime.Temporal time) {
-        return time.getTime().getJodaTimeInstant().toDateTime();
+    private static <T> List<T> removeDuplicates(List<T> l, Comparator<T> comparator) {
+        Set<T> s = new TreeSet<T>(comparator);
+        s.addAll(l);
+        return Arrays.asList((T[]) s.toArray());
     }
 }
