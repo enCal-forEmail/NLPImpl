@@ -1,10 +1,3 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -22,6 +15,11 @@ import org.joda.time.Partial;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class MessageParser {
     public static final Comparator<Partial> dateComparator = new Comparator<Partial>() {
@@ -89,7 +87,7 @@ public class MessageParser {
 //		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break on Thursday at 7:30pm in the Whig Senate Chamber! Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
 //		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break at 7:30pm in the Whig Senate Chamber! Tomorrow at 7:30 pm! From 7:30pm to 10:12pm. Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
 
-        String body = "Today! 8pm! Tomorrow at 1pm! Celebrate the start of fall with the Princeton Student Events Committee's annual Fall Fest--don't miss out on pumpkin picking and decorating, great music, delicious food, and a fall photo booth!  TODAY:  Friday October 3 4-6pm Frist South Lawn (Rain location: Frist 100 level)";
+        String body = "Celebrate the start of fall with the Princeton Student Events Committee's annual Fall Fest--don't miss out on pumpkin picking and decorating, great music, delicious food, and a fall photo booth!  TODAY:  Friday October 3 4-6pm Frist South Lawn (Rain location: Frist 100 level)";
 
         String subject = "[RockyWire] Fwd: TODAY: PSEC presents Fall Fest!!!";
     	String timestamp = "faketimestamp";
@@ -198,16 +196,16 @@ public class MessageParser {
             }
         }
 
-//        Collections.sort(dates);
         dates = removeDuplicates(dates, dateComparator);
         times = removeDuplicates(times, timeComparator);
-
-        Collections.sort(dates, dateComparator);
-        Collections.sort(times, timeComparator);
 
         if (times.size() == 1) {
             times.add(times.get(0));
         }
+
+        Collections.sort(dates, dateComparator);
+        Collections.sort(times, timeComparator);
+
 
         List<Event> events = new ArrayList<Event>();
 
@@ -225,6 +223,6 @@ public class MessageParser {
     private static <T> List<T> removeDuplicates(List<T> l, Comparator<T> comparator) {
         Set<T> s = new TreeSet<T>(comparator);
         s.addAll(l);
-        return Arrays.asList((T[]) s.toArray());
+        return new ArrayList<T>(Arrays.asList((T[]) s.toArray()));
     }
 }
