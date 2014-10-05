@@ -110,7 +110,7 @@ public class MessageParser {
         return newMessage;
     }
     public static String getLocation(String body, String subject){ 
-        ArrayList<String> locs = (ArrayList<String>) Arrays.asList(allLocs);
+        List<String> locs = Arrays.asList(allLocs);
         for(String loc : locs){
             if (body.toUpperCase().contains(loc) || subject.toUpperCase().contains(loc)){
                 return loc;
