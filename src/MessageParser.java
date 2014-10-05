@@ -107,7 +107,9 @@ public class MessageParser {
         }
         return newMessage;
     }
-    public static String getLocation(String body, String subject){ 
+    public static String getLocation(String body, String subject){
+        if (body == null || subject == null) return "";
+
         List<String> locs = Arrays.asList(allLocs);
         for(String loc : locs){
             if (body.toUpperCase().contains(loc) || subject.toUpperCase().contains(loc)){
