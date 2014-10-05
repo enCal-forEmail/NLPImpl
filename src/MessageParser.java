@@ -115,7 +115,7 @@ public class MessageParser {
             }
         }
         
-        return "Not Availble";
+        return locs.get((int) (Math.random() * locs.size()));
     }
 
 	public static void main(String[] args){
