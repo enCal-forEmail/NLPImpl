@@ -103,9 +103,7 @@ public class MessageParser {
             String line = scan.nextLine();
             Pattern patt = Pattern.compile("Date: [a-zA-Z]{3}[a-z]*, [a-zA-Z]{3}[a-z]* [0-9]{2}, [0-9]{4} at [0-9][0-9]*:[0-9]{2} [a-zA-Z]{2}");
             Matcher matcher = patt.matcher(line);
-            if(!matcher.find()){
-                newMessage += line;
-            }
+            newMessage += matcher.replaceAll("");
         }
         return newMessage;
     }
@@ -259,7 +257,7 @@ public class MessageParser {
         }
 
         dates = removeDuplicates(dates, dateComparator);
-        times = removeDuplicates(times, timeComparator);
+        times = removeDuplicates(times, timeComparator);g
 
         if (times.size() == 1) {
             times.add(times.get(0));
