@@ -1,0 +1,324 @@
+11 University Place
+110 Prospect Avenue
+114-116 Nassau Street
+116 Prospect Avenue
+12 Dickinson Street
+120 Alexander Street
+120 Prospect Avenue
+126 Alexander Street
+130 University Place
+136 Alexander Street
+15 University Place
+169 Nassau Street
+171 Broadmead Street
+172 Alexander Street
+179 Nassau Street
+180 Alexander Street
+185 Nassau Street
+1879 Hall
+19 Edwards Place
+19 University Place
+1901-Laughlin Hall
+1903 Hall
+1912 Pavilion
+1915 Hall
+1927 - Clapp Hall
+1937 Hall
+1938 Hall
+1939 Hall
+194 Alexander Street
+194 Nassau Street
+1952 Stadium
+1967 Hall
+1976 Hall
+1981 Hall
+199 Nassau Street
+2 Dickinson Street
+20 Washington Road
+200 Elm Drive
+2000 Meter Racecourse Finish
+201 Forrestal Road
+201 Nassau Street
+21 Edwards Place
+22 Chambers Street
+221 Nassau Street
+228 Alexander Street
+23 University Place
+26 College Road West
+262 Alexander Street
+262A Alexander Street
+263 South Harrison Street
+294 Alexander Street
+306 Alexander Street
+350 Alexander Street
+36 University Place
+39 University Place
+4 Mercer Street
+47 University Place
+48 University Place
+5 Ivy Lane
+693 Alexander Road
+701 Carnegie Center
+71 University Place
+755 Alexander Road
+8 Dickinson Street
+80 Alexander Street
+81 Alexander Street
+87 Prospect Avenue
+91 Prospect Avenue
+99 Alexander Street
+Alexander Hall
+Architecture Building
+Architecture Laboratory
+Art Museum
+Bainbridge House
+Baker Hall
+Baker Rink
+Bedford Field
+Bendheim Center
+Bendheim Hall
+Berlind Theatre
+Blair Hall
+Bloomberg Hall
+Bobst Hall
+Bogle Hall
+Bowen Hall
+Broadmead Field
+Brown Hall
+Burr Hall
+Butler College
+Butler Tract
+Buyers Hall
+Caldwell Field House
+Campbell Field
+Campbell Hall
+Campus Club
+Cannon Club
+Cannon Green
+Cap and Gown Club
+Center for Jewish Life
+Chancellor Green
+Chapel
+Charter Club
+Chilled Water Plant
+Clarke Field
+Clarke Field Press Box
+Class of 1895 Field
+Clio Hall
+Cloister Inn
+Cogeneration Plant
+College Road Apartments
+Colonial Club
+Community Hall
+Computer Science Building
+Cordish Family Pavilion
+Corwin Hall
+Cottage Club
+Cuyler Hall
+DeNunzio Pool
+Dean Mathey Court
+Dickinson Hall
+Dickinson Street Apartments
+Dillon Court East
+Dillon Court West
+Dillon Gym
+Dod Hall
+Dodge Hall
+Dodge-Osborn Hall
+East Pyne Building
+Edwards Hall
+Edwards Place Apartments
+Elementary Particles Lab East
+Elementary Particles Lab West
+Engineering Quad A Wing
+Engineering Quad B Wing
+Engineering Quad C Wing
+Engineering Quad D Wing
+Engineering Quad E Wing
+Engineering Quad F Wing
+Engineering Quad G Wing
+Engineering Quad J Wing
+Eno Hall
+Enterprise CarShare - Butler Tract
+Enterprise CarShare - Dillon Gym
+Enterprise CarShare - Frist Campus Center
+Enterprise CarShare - Graduate College
+Enterprise CarShare - Lawrence Apartments
+Enterprise CarShare - Lot 21
+Enterprise CarShare - Stanworth Apartments
+Facilities Staff Lot 16
+Facilities Staff Lot 17
+Facilities Staff Lot 28
+Faculty, Staff Lot  1
+Faculty, Staff Lot  2
+Faculty, Staff Lot  4
+Faculty, Staff Lot  5
+Faculty, Staff Lot 10
+Faculty, Staff Lot 13
+Faculty, Staff Lot 14
+Faculty, Staff Lot 20
+Faculty, Staff Lot 24
+Faculty, Staff Lot 25
+Faculty, Staff Lot 26
+Faculty, Staff Lot 34
+Faculty, Staff Lot 35
+Faculty, Staff Lot 40
+Faculty, Staff North Garage
+Faculty, Staff West Garage
+Feinberg Hall
+Ferris Thompson Apartments
+Fields Center
+Fine Hall
+Finney Field
+Firestone Library
+Fisher Hall
+Fisher Hall Dorm
+FitzRandolph Observatory
+Forbes Addition
+Forbes College
+Forbes Garden
+Forbes Main
+Forrestal Campus Data Center
+Foulke Hall
+Free B Bus - Nassau & Charlton
+Free B Bus - Nassau @ Palmer Sq
+Free B Bus - Princeton Station
+Frelinghuysen Field
+Frick Chemistry Laboratory
+Friend Center
+Frist Campus Center
+Garden Theatre
+Gas Dynamics Laboratory
+Gauss Hall
+Graduate Students Lot 19
+Green Hall
+Gulick Pavilion
+Guyot Hall
+Haaga House
+Hamilton Hall
+Hargadon Hall
+Helm Building
+Henry Hall
+Henry House
+Holder Hall
+Hoyt Lab
+Icahn Laboratory
+Ivy Club
+Jadwin Gym
+Jadwin Hall
+Joline Hall
+Jones Hall
+Labyrinth Books
+Lake Field
+Launch House
+Lauritzen Hall
+Lawrence Apartments
+Lenz Tennis Center
+Lewis Library
+Library Annex A
+Little Hall
+Lockhart Hall
+Lourie - Love Pavilion
+Lowrie House
+Lyman Spitzer Building
+MacMillan Annex
+MacMillan Building
+Maclean House
+Madison Hall
+Marx Hall
+Mathey College
+McCarter Theatre
+McCormick Hall
+McCosh Hall
+McCosh Health Center
+McDonnell Hall
+Moffett Laboratory
+Mudd Library
+Murley-Pivirotto Family Tower
+Murray Theater
+Myslik Field
+Nassau Court
+Nassau Hall
+New Graduate College
+New South Building
+North Guard Gate
+Nursery Greenhouse
+Nursery Office
+Old Graduate College
+Old Princeton Train Station
+Olden House
+Palmer Guest House
+Pardee Field
+Patton Hall
+Peretsman-Scully Hall
+Peyton Hall
+Plummer Field
+Poe Field
+Powers Field
+Princeton Neuroscience Institute
+Princeton Plasma Physics Lab
+Princeton Plasma Physics Laboratory
+Princeton Stadium
+Princeton Station (Dinky)
+Princeton University Press
+Printing Services
+Prospect House
+Pyne Hall
+Quadrangle Club
+ReCAP
+Rickerson Field
+Roberts Stadium
+Robertson Hall
+Rock Magnetism Laboratory
+Rockefeller College
+Sayre Hall
+Scheide Caldwell House
+Schultz Laboratory
+Scully Hall
+Sexton Field
+Shea Rowing Center
+Sherrerd Field
+Sherrerd Hall
+Shuttle Bus to Newark Airport
+South Guard Booth
+Spelman Halls
+Springdale Club House
+Stanhope Hall
+Stanworth Apartments
+Streicker Bridge
+Strubing Field
+Taxi Stand
+Temp. Train Station Bus Stop
+Temporary Train Station Lot
+Tennis Pavilion
+Terrace Club
+Thomas Laboratory
+Tiger Inn
+Tower Club
+Undergraduates Lot 32
+Upper Strubing Field
+Visitor Lot 23
+Visitor Parking - Lot 21
+Visitor Parking - Lot 23
+Visitor and Faculty, Staff Lot 21
+Von Neumann Hall
+Walker Hall
+Wallace Hall
+Weaver Track Stadium
+Wendell Hall B
+Wendell Hall C
+West College
+West Lodge
+Whig Hall
+Whitman College
+Wilcox Hall
+Wilf Hall
+Wilson College
+Windsor Fields
+Witherspoon Hall
+Woolworth Center
+Wright Hall
+Wu Hall
+Wyman Cottage
+Wyman House
+Yoseloff Hall
