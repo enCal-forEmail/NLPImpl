@@ -1,3 +1,23 @@
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeFieldType;
+import org.joda.time.Partial;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -9,17 +29,6 @@ import edu.stanford.nlp.time.TimeAnnotations;
 import edu.stanford.nlp.time.TimeAnnotator;
 import edu.stanford.nlp.time.TimeExpression;
 import edu.stanford.nlp.util.CoreMap;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.Partial;
-import org.joda.time.Period;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 public class MessageParser {
     public static final Comparator<Partial> dateComparator = new Comparator<Partial>() {
@@ -38,7 +47,7 @@ public class MessageParser {
 
     private static String[] allLocs = { "FIRST CHURCH OF CHRIST, SCIENTIST", "CHURCH OF THE GOOD SHEPHERD, EPISCOPAL", "WESTMINSTER PRESBYTERIAN CHURCH", "ST. JOHN'S PRESBYTERIAN CHURCH", "BERKELEY WOMEN'S CITY CLUB", "TOWN AND GOWN CLUB", "BERKELEY CITY HALL", "WILLIAM R. THORSEN HOUSE", "ROSE WALK", "OLD JEFFERSON ELEMENTARY SCHOOL", "EDWARD F. NIEHAUS HOUSE", "JOSEPH W. HARRIS HOUSE", "PARK CONGREGATIONAL CHURCH", "CAPTAIN CHARLES C. BOUDROW HOUSE", "ANDREW COWPER LAWSON HOUSE", "DRAWING BUILDING", "NORTH GATE HALL", "BERKELEY DAY NURSERY", "JOHN GALEN HOWARD HOUSE", "GOLDEN SHEAF BAKERY", "BORJA HOUSE", "BARKER BLOCK", "THE STUDIO BUILDING", "FOX COURT", "BONITA APARTMENTS", "BONITA HALL", "MANUEL SILVA HOUSE", "JEREMIAH T. BURKE HOUSE", "MORSE BLOCK", "TOVERII TUPPA", "JOSEPH CLAPP COTTAGE", "CHARLES W. HEYWOOD HOUSE", "COLLEGE WOMEN'S CLUB", "DELAWARE STREET HISTORIC DISTRICT", "MISS ELEANOR M. SMITH HOUSE & COTTAGE", "GARFIELD JUNIOR HIGH SCHOOL", "UNITED STATES POST OFFICE", "THE HILLSIDE CLUB", "MRS. EDMUND P. KING BUILDING", "GEORGE MORGAN BUILDING", "ALBERT E. MONTGOMERY HOUSE", "SISTERNA HISTORIC DISTRICT", "SODA WATER WORKS BUILDING", "UNIVERSITY OF CALIFORNIA PRESS BUILDING", "S. J. SILL & CO. GROCERY & HARDWARE STORE", "MARTHA E. SELL BUILDING", "ERNEST ALVA HERON BUILDING", "FREDERICK H. DAKIN WAREHOUSE", "EDGAR JENSEN HOUSE", "WEBB BLOCK", "STANDARD DIE & SPECIALTY COMPANY", "BERKELEY PIANO CLUB", "SQUIRES BLOCK", "CLAREMONT COURT GATE AND STREET MARKERS", "WALLACE W. CLARK BUILDING", "ALFRED BARTLETT HOUSES", "OAKS THEATRE", "LAURA BELLE MARSH KLUEGEL HOUSE", "CALIFORNIA MEMORIAL STADIUM", "ELMWOOD HARDWARE BUILDING", "MARIE & FREDERICK A. HOFFMAN BUILDING", "LAWRENCE BERKELEY NATIONAL LABORATORY BEVATRON SITE", "PHI KAPPA PSI CHAPTER HOUSE", "ANNIE & FRED J. MARTIN HOUSE", "CLEPHANE BUILDING", "CHARLES A. WESTENBERG HOUSE", "WALLACE-SAUER HOUSE", "ENNOR'S RESTAURANT BUILDING", "BERNARD & ANNIE MAYBECK HOUSE NO. 1", "BERKELEY ICELAND", "FRED & AMY CORKILL HOUSE", "CAMBRIDGE APARTMENTS", "HEZLETT'S SILK STORE BUILDING", "BROWER HOUSES AND DAVID BROWER REDWOOD", "DONALD AND HELEN OLSEN HOUSE", "NEEDHAM-OBATA BUILDING", "MOBILIZED WOMEN OF BERKELEY BUILDING", "KOERBER BUILDING", "CAPITOL MARKET BUILDING", "UNIVERSITY YWCA", "FISH-CLARK HOUSE", "PELICAN BUILDING", "DUNCAN & JEAN MCDUFFIE HOUSE", "JOHN BOYD HOUSE", "UNIVERSITY ART MUSEUM", "MARY J. BERG HOUSE", "LUCINDA REAMES HOUSE NO. 1", "LUCINDA REAMES HOUSE NO. 2", "WILLIAM WILKINSON HOUSE"};
 
-    private static TrieST<String> trie = new TrieST<String>();
+    //private static TrieST<String> trie = new TrieST<String>();
 
     private static SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
     private static SimpleDateFormat dateParser2 = new SimpleDateFormat("yyyy-MM-dd'T'HH");
@@ -59,7 +68,7 @@ public class MessageParser {
         props.setProperty("sutime.includeRange", "false");
         pipeline.addAnnotator(new TimeAnnotator("sutime", props));
 
-        BufferedReader io = null;
+        /* BufferedReader io = null;
         try {
             System.out.println("ADADASA");
             io = new BufferedReader(new FileReader("places.txt"));
@@ -70,7 +79,20 @@ public class MessageParser {
             }
         } catch (java.io.IOException e) {
             e.printStackTrace();
+            }*/
+    }
+    public static String preprocessMessage(String message){
+        Scanner scan = new Scanner(message);
+        String newMessage = "";
+        while(scan.hasNext()){
+            String line = scan.nextLine();
+            Pattern patt = Pattern.compile("Date: [a-zA-Z]{3}[a-z]*, [a-zA-Z]{3}[a-z]* [0-9]{2}, [0-9]{4} at [0-9][0-9]*:[0-9]{2} [a-zA-Z]{2}");
+            Matcher matcher = patt.matcher(line);
+            if(!matcher.find()){
+                newMessage += line;
+            }
         }
+        return newMessage;
     }
     public static String getLocation(String body, String subject){ 
         ArrayList<String> locs = (ArrayList<String>) Arrays.asList(allLocs);
@@ -83,21 +105,21 @@ public class MessageParser {
         return "Not Availble";
     }
 
-	public static void main(String[] args){
-//		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break on Thursday at 7:30pm in the Whig Senate Chamber! Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
-//		String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break at 7:30pm in the Whig Senate Chamber! Tomorrow at 7:30 pm! From 7:30pm to 10:12pm. Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
+    public static void main(String[] args){
+//      String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break on Thursday at 7:30pm in the Whig Senate Chamber! Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
+//      String body = "Hey Rocky!  Love learning about politics? Enjoy trivia games? Are you super competitive? Do you just like having fun and eating food?  Come on out to the  Political Trivia Study Break  Join The American Whig-Cliosophic Society for this year's first study break at 7:30pm in the Whig Senate Chamber! Tomorrow at 7:30 pm! From 7:30pm to 10:12pm. Come settle the age-old question! Who's smarter: Whig or Clio? The winning side will receive a prize!  Pizza and other foods will be served as well!";
 
         String body = "Celebrate the start of fall with the Princeton Student Events Committee's annual Fall Fest--don't miss out on pumpkin picking and decorating, great music, delicious food, and a fall photo booth!  TODAY:  Friday October 3 4-6pm Frist South Lawn (Rain location: Frist 100 level)";
 
         String subject = "[RockyWire] Fwd: TODAY: PSEC presents Fall Fest!!!";
-    	String timestamp = "faketimestamp";
-    	List<Event> eventsResult = getEventsInMessage(body, subject, timestamp);
+        String timestamp = "faketimestamp";
+        List<Event> eventsResult = getEventsInMessage(body, subject, timestamp);
 
         for (Event result : eventsResult) {
             System.out.println(result);
         }
-	}
-
+    }
+    /*
     public static String getEventLocation(String body) {
         String longestPrefix = "";
         for (int i = 0; i < body.length(); i++) {
@@ -108,6 +130,7 @@ public class MessageParser {
         }
         return longestPrefix;
     }
+    */
 
     private static double getPeriodMinutes(SUTime.Temporal temp) {
         try {
@@ -153,8 +176,9 @@ public class MessageParser {
         }
     }
 
-	// given timestamp and message id
-	public static List<Event> getEventsInMessage(String body, String subject, String timestamp) {
+    // given timestamp and message id
+    public static List<Event> getEventsInMessage(String body, String subject, String timestamp) {
+        body = preprocessMessage(body);
         List<Partial> dates = new ArrayList<Partial>();
         List<Partial> times = new ArrayList<Partial>();
 
@@ -218,7 +242,7 @@ public class MessageParser {
         }
 
         return events;
-	}
+    }
 
     private static <T> List<T> removeDuplicates(List<T> l, Comparator<T> comparator) {
         Set<T> s = new TreeSet<T>(comparator);
